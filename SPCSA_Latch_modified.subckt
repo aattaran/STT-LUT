@@ -1,0 +1,106 @@
+*************SRF STT Latch Subcircuitt****************
+
+.subckt stt_latch vdd vss se q qbar R_left=100k R_right=20k
+
+
+********************************************************************************
+*************************************************************
+******Vt Variation Model***
+.param dvtn_intra=AGAUSS(0,0.03,1)
+.param dvtp_intra=AGAUSS(0,0.03,1)
+
+.param dvth_inter=0 *AGAUSS(0,0.06,1)
+.param dvtn_inter=dvth_inter
+.param dvtp_inter=dvth_inter
+
+
+****MTJ width (W) and oxide thickness (t) variaiton model ***
+.param dw_intra= AGAUSS(0,0.1,1)
+.param dt_intra= AGAUSS(0,0.1,1)
+
+.param dwidth_inter= 0 *AGAUSS(0,0.1,1)
+.param dtmgo_inter= 0 *AGAUSS(0,0.1,1)
+
+.param dw_inter=dwidth_inter
+.param dt_inter=dtmgo_inter
+
+
+********************************************************************************
+**************************************************************
+
+***sense amplifier scaling factor
+.param ks=1
+
+
+
+**modification: self-resetting feedback
+
+xmpf1 an ap ddf vdd pch  nfins=fins dvt_intra=dvtp_intra dvt_inter=dvtp_inter
+xmpf2 ap an ddf vdd pch nfins=fins  dvt_intra=dvtp_intra dvt_inter=dvtp_inter
+
+xmpf3 ddf qbar ddf1 vdd pch nfins=fins  dvt_intra=dvtp_intra dvt_inter=dvtp_inter
+xmpf4 ddf1 q vdd vdd pch nfins=fins  dvt_intra=dvtp_intra dvt_inter=dvtp_inter
+
+***NAND to generate feedback control***
+*xp1 fout op vdd vdd pch nfins=fins  dvt_intra=dvtp_intra dvt_inter=dvtp_inter
+*xp2 fout on vdd vdd pch nfins=fins  dvt_intra=dvtp_intra dvt_inter=dvtp_inter
+
+*xn1 fout op nnd1 vss nch nfins=fins  dvt_intra=dvtn_intra dvt_inter=dvtn_inter
+*xn2 nnd1 on vss vss nch nfins=fins  dvt_intra=dvtn_intra dvt_inter=dvtn_inter
+
+**keeper idea**
+*xmpf1 an bn ddf vdd pch nfins=fins  dvt_intra=dvtp_intra dvt_inter=dvtp_inter
+*xmpf2 ap bp ddf vdd pch nfins=fins  dvt_intra=dvtp_intra dvt_inter=dvtp_inter
+
+
+
+***sense enable footer
+xmn4 vssv se vss vss nch nfins=fins  dvt_intra=dvtn_intra dvt_inter=dvtn_inter
+
+***** MTJs
+r1 an vssv r='R_left*(exp(dt_inter+dt_intra))/((1+dw_inter+dw_intra)^2)'
+r2 ap vssv r='R_right*(exp(dt_inter+dt_intra))/((1+dw_inter+dw_intra)^2)'
+
+***precharge transsitors for MTJs
+xmp4 an se vdd vdd pch nfins=fins  dvt_intra=dvtp_intra dvt_inter=dvtp_inter
+xmp5 ap se vdd vdd pch nfins=fins  dvt_intra=dvtp_intra dvt_inter=dvtp_inter
+
+
+***INV amplifiers
+xmni1 bn an vss vss nch  nfins=fins  dvt_intra=dvtn_intra dvt_inter=dvtn_inter
+xmpi1 bn an vdd vdd pch nfins=fins  dvt_intra=dvtp_intra dvt_inter=dvtp_inter
+
+xmni2 bp ap vss vss nch  nfins=fins  dvt_intra=dvtn_intra dvt_inter=dvtn_inter
+xmpi2 bp ap vdd vdd pch nfins=fins  dvt_intra=dvtp_intra dvt_inter=dvtp_inter
+
+
+
+**** Sense amplifier precharge
+xmp0 on se vdd vdd pch nfins=fins  dvt_intra=dvtp_intra dvt_inter=dvtp_inter
+xmp1 op se vdd vdd pch nfins=fins  dvt_intra=dvtp_intra dvt_inter=dvtp_inter
+
+
+**** Sense amplifier
+xmp2 on op vdd vdd pch nfins=fins  dvt_intra=dvtp_intra dvt_inter=dvtp_inter
+xmp3 op on vdd vdd pch nfins=fins  dvt_intra=dvtp_intra dvt_inter=dvtp_inter
+
+xmn0 on op cn vss nch  nfins=fins  dvt_intra=dvtn_intra dvt_inter=dvtn_inter
+xmn1 op on cp vss nch  nfins=fins  dvt_intra=dvtn_intra dvt_inter=dvtn_inter
+
+xmn2 cn bn vss vss nch  nfins=fins  dvt_intra=dvtn_intra dvt_inter=dvtn_inter
+xmn3 cp bp vss vss nch  nfins=fins  dvt_intra=dvtn_intra dvt_inter=dvtn_inter
+
+
+***INV output buffers ***
+xm21 q on vss vss nch  nfins=fins  dvt_intra=dvtn_intra dvt_inter=dvtn_inter
+xm24 q on vdd vdd pch  nfins=fins  dvt_intra=dvtp_intra dvt_inter=dvtp_inter
+
+xm20 qbar op vss vss nch  nfins=fins  dvt_intra=dvtn_intra dvt_inter=dvtn_inter
+xm19 qbar op vdd vdd pch  nfins=fins  dvt_intra=dvtp_intra dvt_inter=dvtp_inter
+
+
+.ends
+
+
+
+

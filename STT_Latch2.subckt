@@ -1,0 +1,76 @@
+.subckt stt_latch vdd vss se q qbar R_left=100k R_right=20k 
+
+
+**********Variation model and parameters*************************
+.include '../finfet/finfet_var.subckt'
+******Vt Variation Model***
+.param vt0= 185m ***Nominal threshold voltage
+.param dvtn_intra=AGAUSS(0,'0.1*vt0',1)
+.param dvtp_intra=AGAUSS(0,'0.1*vt0',1)
+
+.param dvth_inter=0 *AGAUSS(0,'0.1*vt0',1)
+.param dvtn_inter=dvth_inter
+.param dvtp_inter=dvth_inter
+
+****MTJ radious (r) and oxide thickness (t) variaiton model ***
+.param r0=14n  ***nominal MTJ radious
+.param tox0=0.85n  ***nominal MgO thickness
+.param tmr0=2 ***nominal TMR
+
+.param dr_intra=AGAUSS(0,'0.1*r0',1)
+.param dt_intra=AGAUSS(0,'0.1*tox0',1)
+
+.param drad_inter=0 *AGAUSS(0,'0.1*r0',1)
+.param dtmgo_inter=0 *AGAUSS(0,'0.1*tox0',1)
+
+.param dr_inter=drad_inter
+.param dt_inter=dtmgo_inter
+
+
+***sense amplifier scaling factor
+.param fins=1
+
+
+
+***sense amplifier scaling factor
+.param fins=1
+
+
+***sense enable footer
+xse gndv se vss vss nch  nfin=fins  
+
+***PMOS Precharge***************
+
+x15 net1 se vdd vdd pch  nfin=fins 
+x14 net2 se vdd vdd pch  nfin=fins  
+
+**** Latch
+
+xp1 net1 net2 vdd vdd pch  nfin=fins  
+xp2 net2 net1 vdd vdd pch  nfin=fins  
+
+xn1 net1 net2 net3 vss nch  nfin=fins  
+xn2 net2 net1 net4 vss nch  nfin=fins  
+***** MTJs
+
+r1 net3 gndv  r='R_left*(exp(dt_inter+dt_intra))/((1+dr_inter+dr_intra)^2)'
+r2 net4 gndv  r='R_right*(exp(dt_inter+dt_intra))/((1+dr_inter+dr_intra)^2)'
+
+
+*xMTJ1 net3 gndv mtj state = '1-stat' 
+*xMTJ2 net4 gndv mtj state = stat 
+
+***INV buffers ***
+x21 q net1 vss vss nch  nfin=fins  
+x24 q net1 vdd vdd pch  nfin=fins  
+
+x20 qbar net2 vss vss nch  nfin=fins  
+x19 qbar net2 vdd vdd pch  nfin=fins  
+
+*.ic v(q) = vdd
+*.ic v(qbar) = vdd
+*.nodeset v(q) = vdd
+*.nodeset v(qbar) = vdd
+
+
+.ends

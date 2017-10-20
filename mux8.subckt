@@ -1,0 +1,14 @@
+
+
+.subckt mux8 vdd vss q0 q1 q2 q3 q4 q5 q6 q7 s0 s1 s2 out
+
+
+
+xmux41 vdd vss q0 q1 q2 q3 s0 s1 out1 mux4
+xmux42 vdd vss q4 q5 q6 q7 s0 s1 out2 mux4
+
+xmux2 vdd vss out1 out2 s2 out mux2
+
+
+
+.ends

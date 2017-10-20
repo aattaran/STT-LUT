@@ -1,0 +1,79 @@
+.subckt mux4 vdd vss q0 q1 q2 q3 s0 s1 out
+
+
+.include '../finfet/finfet_var.subckt'
+******Vt Variation Model***
+.param vt0= 185m ***Nominal threshold voltage
+.param dvtn_intra=AGAUSS(0,'0.1*vt0',1)
+.param dvtp_intra=AGAUSS(0,'0.1*vt0',1)
+
+.param dvth_inter=0 *AGAUSS(0,'0.1*vt0',1)
+.param dvtn_inter=dvth_inter
+.param dvtp_inter=dvth_inter
+
+****MTJ radious (r) and oxide thickness (t) variaiton model ***
+.param r0=14n  ***nominal MTJ radious
+.param tox0=0.85n  ***nominal MgO thickness
+.param tmr0=2 ***nominal TMR
+
+.param dr_intra=AGAUSS(0,'0.1*r0',1)
+.param dt_intra=AGAUSS(0,'0.1*tox0',1)
+
+.param drad_inter=0 *AGAUSS(0,'0.1*r0',1)
+.param dtmgo_inter=0 *AGAUSS(0,'0.1*tox0',1)
+
+.param dr_inter=drad_inter
+.param dt_inter=dtmgo_inter
+***using nand gates
+*xnand31 vdd vss q0 s0bar s1bar out1 nand3
+*xnand32 vdd vss q1 s0 s1bar out2 nand3
+*xnand33 vdd vss q2 s0bar s1 out3 nand3
+*xnand34 vdd vss q3 s0 s1 out4 nand3
+*xnand41 vdd vss out1 out2 out3 out4 out nand4
+*xinv1 vdd vss s0 s0bar inv
+*xinv2 vdd vss s1 s1bar inv
+
+***using tri-state inv and transmission gate
+.param fins=1
+
+xn9 out yn vss vss nch nfin=fins
+xp9 out yn vdd vdd pch nfin=fins
+
+xpt1 a1a2 s1 yn vdd pch nfin=fins
+xnt1 a1a2 ns1 yn vss nch nfin=fins
+
+xpt2 a3a4 ns1 yn vdd pch nfin=fins
+xnt2 a3a4 s1 yn vss nch nfin=fins
+
+xps1 ns1 s1 vdd vdd pch nfin=fins
+xns1 ns1 s1 vss vss nch nfin=fins
+
+
+xp1 n1 q0 vdd vdd pch nfin=fins
+xp2 a1a2 s0 n1 vdd pch nfin=fins
+xn2 a1a2 ns0 n2 vss nch nfin=fins
+xn1 n2 q0 vss vss nch nfin=fins
+
+xp3 n3 q1 vdd vdd pch nfin=fins
+xp4 a1a2 ns0 n3 vdd pch nfin=fins
+xn3 a1a2 s0 n4 vss nch nfin=fins
+xn4 n4 q1 vss vss nch nfin=fins
+
+xp5 n5 q2 vdd vdd pch nfin=fins
+xp6 a3a4 s0 n5 vdd pch nfin=fins
+xn6 a3a4 ns0 n6 vss nch nfin=fins
+xn5 n6 q2 vss vss nch nfin=fins
+
+xp7 n7 q3 vdd vdd pch nfin=fins
+xp8 a3a4 ns0 n7 vdd pch nfin=fins
+xn8 a3a4 s0 n8 vss nch nfin=fins
+xn7 n8 q3 vss vss nch nfin=fins
+
+
+xps0 ns0 s0 vdd vdd pch nfin=fins
+xns0 ns0 s0 vss vss nch nfin=fins
+
+
+.ends
+
+

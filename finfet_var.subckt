@@ -1,0 +1,24 @@
+****Transistor model with Vt variation applied ******
+.subckt nch D G S B nfin=1
+XMN D Gn S B nfet nfin=nfin
+Vdvtn G Gn DC='dvtn_inter+(dvtn_intra/sqrt(nfin))'
+.ends 
+  
+.subckt pch D G S B nfin=1
+XMP D Gp S B pfet nfin=nfin
+Vdvtp Gp G DC='dvtp_inter+(dvtp_intra/sqrt(nfin))'
+.ends
+
+
+****FinFET subcircuit with only inter-die Vt variations applied
+.subckt nch_inter D G S B nfin=1
+XMN D Gn S B nfet nfin=nfin
+Vdvtn G Gn DC='dvtn_inter'
+.ends
+
+.subckt pch_inter D G S B nfin=1
+XMP D Gp S B pfet nfin=nfin
+Vdvtp Gp G DC='dvtp_inter'
+.ends
+
+

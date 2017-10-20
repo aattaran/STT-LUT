@@ -1,0 +1,12 @@
+
+.subckt mux32 vdd vss q0 q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q19 q20 q21 q22 q23 q24 q25 q26 q27 q28 q29 q30 q31 s0 s1 s2 s3 s4 out 
+
+
+
+xmux161 vdd vss q0 q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 s0 s1 s2 s3 out1 mux16
+xmux162 vdd vss q16 q17 q18 q19 q20 q21 q22 q23 q24 q25 q26 q27 q28 q29 q30 q31 s0 s1 s2 s3 out2 mux16
+
+xmux21 vdd vss out1 out2 s4 out mux2
+
+
+.ends

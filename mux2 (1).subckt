@@ -1,0 +1,53 @@
+*************lut3 subcircuit netlist*********************************
+
+
+.subckt mux2 vdd vss q0 q1 s0 out
+
+.include '../finfet/finfet_var.subckt'
+******Vt Variation Model***
+.param vt0= 185m ***Nominal threshold voltage
+.param dvtn_intra=AGAUSS(0,'0.1*vt0',1)
+.param dvtp_intra=AGAUSS(0,'0.1*vt0',1)
+
+.param dvth_inter=0 *AGAUSS(0,'0.1*vt0',1)
+.param dvtn_inter=dvth_inter
+.param dvtp_inter=dvth_inter
+
+****MTJ radious (r) and oxide thickness (t) variaiton model ***
+.param r0=14n  ***nominal MTJ radious
+.param tox0=0.85n  ***nominal MgO thickness
+.param tmr0=2 ***nominal TMR
+
+.param dr_intra=AGAUSS(0,'0.1*r0',1)
+.param dt_intra=AGAUSS(0,'0.1*tox0',1)
+
+.param drad_inter=0 *AGAUSS(0,'0.1*r0',1)
+.param dtmgo_inter=0 *AGAUSS(0,'0.1*tox0',1)
+
+.param dr_inter=drad_inter
+.param dt_inter=dtmgo_inter
+*.subckt mux2 vdd vss q0 q1 s0 s0b out
+
+***implmenetation using nand gates
+*xnand21 vdd vss q0 s0bar o1 nand2
+*xnand22 vdd vss q1 s0 o2 nand2
+*xnand23 vdd vss o1 o2 out nand2
+*xinv1 vdd vss s0 s0bar inv
+
+***implemnetation using tri-state inverters
+.param fins=1
+xp2 net2 q0 vdd vdd pch nfin=fins
+xn3 net4 q0 vss vss nch nfin=fins
+xp3 net3 s0 net2 vdd pch nfin=fins
+xn2 net3 s0b net4 vss nch nfin=fins
+xp4 net5 q1 vdd vdd pch nfin=fins
+xn5 net6 q1 vss vss nch nfin=fins
+xp5 net3 s0b net5 vdd pch nfin=fins
+xn4 net3 s0 net6 vss nch nfin=fins
+xp1 s0b s0 vdd vdd pch nfin=fins
+xn1 s0b s0 vss vss nch nfin=fins
+xp6 out net3 vdd vdd pch nfin=fins
+xn6 out net3 vss vss nch nfin=fins
+
+.ends
+

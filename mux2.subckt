@@ -1,0 +1,28 @@
+*************lut3 subcircuit netlist*********************************
+
+
+.subckt mux2 vdd vss q0 q1 s0 out
+
+
+***implmenetation using nand gates
+*xnand21 vdd vss q0 s0bar o1 nand2
+*xnand22 vdd vss q1 s0 o2 nand2
+*xnand23 vdd vss o1 o2 out nand2
+*xinv1 vdd vss s0 s0bar inv
+
+***implemnetation using tri-state inverters
+.param fins=1
+xp2 net2 q0 vdd vdd pfet nfin=fins
+xn3 net4 q0 vss vss nfet nfin=fins
+xp3 net3 s0 net2 vdd pfet nfin=fins
+xn2 net3 s0b net4 vss nfet nfin=fins
+xp4 net5 q1 vdd vdd pfet nfin=fins
+xn5 net6 q1 vss vss nfet nfin=fins
+xp5 net3 s0b net5 vdd pfet nfin=fins
+xn4 net3 s0 net6 vss nfet nfin=fins
+xp1 s0b s0 vdd vdd pfet nfin=fins
+xn1 s0b s0 vss vss nfet nfin=fins
+xp6 out net3 vdd vdd pfet nfin=fins
+xn6 out net3 vss vss nfet nfin=fins
+
+.ends

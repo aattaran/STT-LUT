@@ -1,0 +1,55 @@
+
+
+.subckt mux4 vdd vss q0 q1 q2 q3 s0 s1 out
+
+***using nand gates
+*xnand31 vdd vss q0 s0bar s1bar out1 nand3
+*xnand32 vdd vss q1 s0 s1bar out2 nand3
+*xnand33 vdd vss q2 s0bar s1 out3 nand3
+*xnand34 vdd vss q3 s0 s1 out4 nand3
+*xnand41 vdd vss out1 out2 out3 out4 out nand4
+*xinv1 vdd vss s0 s0bar inv
+*xinv2 vdd vss s1 s1bar inv
+
+***using tri-state inv and transmission gate
+.param fins=1
+
+xn9 out yn vss vss nfet nfin=fins
+xp9 out yn vdd vdd pfet nfin=fins
+
+xpt1 a1a2 s1 yn vdd pfet nfin=fins
+xnt1 a1a2 ns1 yn vss nfet nfin=fins
+
+xpt2 a3a4 ns1 yn vdd pfet nfin=fins
+xnt2 a3a4 s1 yn vss nfet nfin=fins
+
+xps1 ns1 s1 vdd vdd pfet nfin=fins
+xns1 ns1 s1 vss vss nfet nfin=fins
+
+
+xp1 n1 q0 vdd vdd pfet nfin=fins
+xp2 a1a2 s0 n1 vdd pfet nfin=fins
+xn2 a1a2 ns0 n2 vss nfet nfin=fins
+xn1 n2 q0 vss vss nfet nfin=fins
+
+xp3 n3 q1 vdd vdd pfet nfin=fins
+xp4 a1a2 ns0 n3 vdd pfet nfin=fins
+xn3 a1a2 s0 n4 vss nfet nfin=fins
+xn4 n4 q1 vss vss nfet nfin=fins
+
+xp5 n5 q2 vdd vdd pfet nfin=fins
+xp6 a3a4 s0 n5 vdd pfet nfin=fins
+xn6 a3a4 ns0 n6 vss nfet nfin=fins
+xn5 n6 q2 vss vss nfet nfin=fins
+
+xp7 n7 q3 vdd vdd pfet nfin=fins
+xp8 a3a4 ns0 n7 vdd pfet nfin=fins
+xn8 a3a4 s0 n8 vss nfet nfin=fins
+xn7 n8 q3 vss vss nfet nfin=fins
+
+
+xps0 ns0 s0 vdd vdd pfet nfin=fins
+xns0 ns0 s0 vss vss nfet nfin=fins
+
+
+.ends

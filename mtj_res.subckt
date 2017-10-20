@@ -1,0 +1,62 @@
+**** MTJ read resistance subcircuit model ***
+
+
+*********************
+*  parameter list   *
+*********************
+*STT-MTJ geometry:
+*r0: radius, tox0: oxide thickness of STT-MTJ
+*MTJ state: MTJ state (0: Parallel, 1: Anti-parallel)
+*recommended values for 65nm bulk process
+*.param r0 = 65n
+*.param tox0 = 1.2n
+
+*recommended values for 32nm bulk process
+*.param r0 = 32n
+*.param tox0 = 1n
+
+*recommended values for 10nm FinFET process
+*.param r0 = 14n
+*.param tox0 = 0.85n
+
+*********************
+*  port list   *
+*********************
+*nfl: Free Layer node
+*npl: Pinned Layer node
+
+*********************
+*      netlist      *
+*********************
+.subckt mtj fl pl state=0
+
+.param vh=0.5
+.param phi = 0.4
+.param F = 211
+.param rreal=r0+dr_inter+dr_intra
+.param toxreal=tox0+dt_inter+dt_intra
+.param A=3.1416*rreal*rreal
+.param rp=(toxreal/(F*sqrt(phi)*A))*exp(1.025*toxreal*sqrt(phi))
+
+rmtj fl pl 'rp/(1-(state/(1+((1+ V(fl,pl)*V(fl,pl)/(vh*vh))/tmr0))))'   
+xm66 fl pl vdd vdd pfet nfins=fins nf=nfings m=1  cgdo=1p cgso=1p cbd=1p
++cbs=1p cj=1p cjsw=1p
+
+.ends
+
+.subckt mtj_ref fl pl r = 14n 
+
+.param vh=0.5
+.param phi = 0.4
+.param F = 211
+.param rreal=r+dr_inter+dr_intra
+.param toxreal=tox0+dt_inter+dt_intra
+.param A=3.1416*rreal*rreal
+.param rp=(toxreal/(F*sqrt(phi)*A))*exp(1.025*toxreal*sqrt(phi))
+
+rmtj fl pl 'rp/(1-(1/(1+((1+ V(fl,pl)*V(fl,pl)/(vh*vh))/tmr0))))'   
+
+.ends
+
+
+
